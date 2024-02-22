@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Editor</title>
+    <style>
+        textarea {
+            width: 100%;
+            height: 400px;
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+
+        #response {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Simple Code Editor</h1>
+<textarea id="editor"></textarea>
+<button id="openButton">Open File</button>
+<button id="saveButton">Save File</button>
+<div id="response"></div>
+
+<script>
+    const editor = document.getElementById('editor');
+    const openButton = document.getElementById('openButton');
+    const saveButton = document.getElementById('saveButton');
+    const responseDiv = document.getElementById('response');
+
+    openButton.addEventListener('click', async () => {
+        const response = await fetch('http://localhost:8000/get_file');
+        const text = await response.text();
+        editor.value = text;
+    });
+
+    saveButton.addEventListener('click', async () => {
+        const text = editor.value;
+        const response = await fetch('http://localhost:8000/save_file', {
+            method: 'POST',
+            body: text
+        });
+        const jsonResponse = await response.json();
+        responseDiv.innerText = `File saved: ${jsonResponse.message}`;
+    });
+</script>
+</body>
+</html>
